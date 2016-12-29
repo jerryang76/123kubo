@@ -21,7 +21,7 @@ read_123 > output.html
 
 
 
-#kubo_single <URL>
+#kubo_single /<URL/>
 
 Exmaple:
 
