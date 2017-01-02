@@ -46,44 +46,35 @@ SRC_page = http_get(data)
 #print "here:"+str(http_soup_out)
 #print SRC_page
 #準備讓soup介入處理
-soup = BeautifulSoup(SRC_page, "html.parser")
+SRC_soup = BeautifulSoup(SRC_page, "html.parser")
 #找尋該頁所有影片子頁
-#print soup.find_all('p', class_='t')
-soup_out = soup.find_all('p', class_='t')
-
+#print SRC_soup.find_all('p', class_='t')
+soup_out = SRC_soup.find_all('p', class_='t')
+#xfplay = "xfplay"
+#處理子頁中的連結
 for src in soup_out:
+	#找主頁中所有連結
 	src_links = src.findAll('a')	
-	#linkgrep = collect_links(src_links)	
-	#def collect_links(src_links):
+	#詢問主頁中12個連結的子頁
 	for a in src_links:		
 		sub = a.get("href")
 		#print a.get("href")
 		#print sub
+		#http get 子頁
 		DST_page = http_get(data)
 		#print DST_page
-		#http_connect.request('GET', a['href'], '', headers)
-		#http_data = http_connect.getresponse()
-		#hd_raw = http_data.read()
-		hd_soup = BeautifulSoup(DST_page, "html.parser")
-		#搜尋所有<div class="vpl"
-		hd_links = hd_soup.find_all('div', class_='vpl')			
-		#all links			
-		if len(hd_links) <= 1:
-			#如果沒有先鋒片源，則跳過搜尋
-			print "No XFplay source"
-			print "<br>"
-			continue
-		else:
-			#找第2個class=vpl，因第一個vpl是flv片源，第2個才是先鋒片源
-			links2 = hd_links[1].findAll('a')
-		#列出第1個連接，通常是最清楚或最新的連結
-		#print links2[0]
-		#print 'http://'+host +str(links2[0])
-		#如果array是空的，就是沒有片子
-		if len(links2) <= 0:
-			print "No file"
-			print "<br>"
-			continue
-		else:
-			print links2[0]
-			print "<br>"
+		DST_soup = BeautifulSoup(DST_page, "html.parser")
+		#搜尋所有<div class="vmain"
+		DST_vmain = DST_soup.find_all('div', class_='vmain')
+		#find xfplay in vmain
+
+		for b in DST_vmain:	
+			print b
+			#print b.find("xfplay")
+			if b.find("xfplay") is None:
+				print "No xfplay"				
+			else:
+				DST_b = BeautifulSoup(b, "html.parser")
+				DST_vpl = DST_b.find_all('div', class_='vpl')
+				#如有xfplay，則vpl裡第1個連結就是正確link
+				DST_link = DST_vpl[1].findall('a')			
