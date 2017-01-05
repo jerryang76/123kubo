@@ -27,6 +27,6 @@ Exmaple:
 
 kubo_single http://www.123kubo.com/vod-search-id-1-cid--area-%E6%AD%90%E7%BE%8E-tag--year-2015-wd--actor--order-vod_hits_month%20desc.html
 
-This Link format is wrong!!!!!                                                ↓↓↓↓
+This Link format is wrong!!!!!                                                                         ↓↓↓↓
 
-http://www.123kubo.com/vod-search-id-1-cid--tag--area-泰國-tag--year-2017-wd--actor--order-vod_hits_month%20desc.html
+kubo_single http://www.123kubo.com/vod-search-id-1-cid--tag--area-泰國-tag--year-2017-wd--actor--order-vod_hits_month%20desc.html
