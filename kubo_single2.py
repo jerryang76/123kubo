@@ -71,6 +71,14 @@ for src in soup_out:
 		#DST_vmain結果為utf-8編碼!!!，需要unicode
 		#print DST_vmain
 		#print
+		
+		#檢查子頁是否有xfplay
+		DST_xfp_check = DST_soup.find(text=xfplay)
+		if DST_xfp_check is None:
+			print "<b>No xfplay</b>"
+			continue #回到for
+		
+		
 		#跳進for搜尋連結之前，必須先確認vmain裡面是否含有xfplay
 		#參考測試頁面:
 		#http://www.123kubo.com/vod-search-id-1-cid--area-%E6%AD%90%E7%BE%8E-tag--year-2016-wd--actor--order-vod_hits_month%20desc-p-3.html
