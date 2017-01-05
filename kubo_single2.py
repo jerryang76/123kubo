@@ -68,9 +68,14 @@ for src in soup_out:
 		DST_soup = BeautifulSoup(DST_page, "html.parser")
 		#搜尋所有<div class="vmain"
 		DST_vmain = DST_soup.find_all('div', class_='vmain')
-		#DST_vmain結果為utf-8編碼，需要unicode
+		#DST_vmain結果為utf-8編碼!!!，需要unicode
 		#print DST_vmain
 		#print
+		#跳進for搜尋連結之前，必須先確認vmain裡面是否含有xfplay
+		#參考測試頁面:
+		#http://www.123kubo.com/vod-search-id-1-cid--area-%E6%AD%90%E7%BE%8E-tag--year-2016-wd--actor--order-vod_hits_month%20desc-p-3.html
+		#降臨/異星入境(裡面沒有xfplay連結)
+		#還沒做!!!!!
 		#從 vmain 中找 xfplay
 		#從含有xfplay的vmain中，找<div class="vpl"
 		#從 vpl 中找
@@ -80,18 +85,17 @@ for src in soup_out:
 			DST_check = sector.find(text=xfplay)
 			#print sector.find(text=xfplay)
 			if  DST_check is None:
-				print "<b>No xfplay</b>"
+				# print "<b>No xfplay</b>"
 				continue #回到for
 			else:			
 				#如有xfplay，則vpl裡第1個連結就是正確link
 				#sector是unicode
-				print sector
+				# print sector
 				# print
 				# print
-				DST_vpl = sector.find_all('div', class_='vpl')
-				#DST_vpl結果為utf-8，需要轉unicode
-				DST_vpl = re.compile(DST_vpl, re.UNICODE)
-				#print ('DST_vpl', DST_vpl)
-				#這裡還有問題!!!!!!!無法用find
+				DST_vpl = sector.find_next('div', class_='vpl')				
+				# print DST_vpl
 				#print DST_vpl.find_all('a')
-				DST_link = DST_vpl[1].find('a')
+				DST_link = DST_vpl.find_next('a')
+				#最後結果!!!
+				print DST_link
