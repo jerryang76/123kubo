@@ -1,7 +1,7 @@
 # coding=utf-8
 from bs4 import BeautifulSoup
 #from HTMLParser import HTMLParser
-import httplib, sys
+import httplib, sys, re
 #加入base page
 #base_href = 'http://www.123kubo.com'
 print '<base href="http://www.123kubo.com/" target="_blank">'
@@ -50,12 +50,14 @@ SRC_soup = BeautifulSoup(SRC_page, "html.parser")
 #找尋該頁所有影片子頁
 #print SRC_soup.find_all('p', class_='t')
 soup_out = SRC_soup.find_all('p', class_='t')
-#xfplay = "xfplay"
+#搜尋字串時必須要轉碼成UTF-8
+xfplay = re.compile(u'xfplay')
+#xfplay = 'xfplay'
 #處理子頁中的連結
 for src in soup_out:
 	#找主頁中所有連結
 	src_links = src.findAll('a')	
-	#詢問主頁中12個連結的子頁
+	#詢問主頁中連結的子頁
 	for a in src_links:		
 		sub = a.get("href")
 		#print a.get("href")
@@ -66,15 +68,30 @@ for src in soup_out:
 		DST_soup = BeautifulSoup(DST_page, "html.parser")
 		#搜尋所有<div class="vmain"
 		DST_vmain = DST_soup.find_all('div', class_='vmain')
-		#find xfplay in vmain
-
-		for b in DST_vmain:	
-			print b
-			#print b.find("xfplay")
-			if b.find("xfplay") is None:
-				print "No xfplay"				
-			else:
-				DST_b = BeautifulSoup(b, "html.parser")
-				DST_vpl = DST_b.find_all('div', class_='vpl')
+		#DST_vmain結果為utf-8編碼，需要unicode
+		#print DST_vmain
+		#print
+		#從 vmain 中找 xfplay
+		#從含有xfplay的vmain中，找<div class="vpl"
+		#從 vpl 中找
+		for sector in DST_vmain:	
+			#print sector
+			#只能用Find，不然答案是array，無法check for none
+			DST_check = sector.find(text=xfplay)
+			#print sector.find(text=xfplay)
+			if  DST_check is None:
+				print "<b>No xfplay</b>"
+				continue #回到for
+			else:			
 				#如有xfplay，則vpl裡第1個連結就是正確link
-				DST_link = DST_vpl[1].findall('a')			
+				#sector是unicode
+				print sector
+				# print
+				# print
+				DST_vpl = sector.find_all('div', class_='vpl')
+				#DST_vpl結果為utf-8，需要轉unicode
+				DST_vpl = re.compile(DST_vpl, re.UNICODE)
+				#print ('DST_vpl', DST_vpl)
+				#這裡還有問題!!!!!!!無法用find
+				#print DST_vpl.find_all('a')
+				DST_link = DST_vpl[1].find('a')
