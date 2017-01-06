@@ -9,13 +9,12 @@ user_agent = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, li
 headers = { 'User-Agent' : user_agent}
 #連線控制與URL
 http_connect = httplib.HTTPConnection(host, 80, timeout=10)
-
+counter = 0
 
 def http_get(data):
 	#列出來源頁面
-	#print '<a href="'+sub+'" target="_blank">'+host+sub+'</a>'
 	#print "<br>"
-	#print sub	
+	#request(method, url, headers)
 	#print (sub,headers)
 	http_connect.request('GET', sub, '', headers)	
 	#準備收取內容
@@ -28,8 +27,7 @@ def http_get(data):
 	
 	
 def http_post(data):
-	#列出來源頁面
-	#print '<a href="'+sub+'" target="_blank">'+host+sub+'</a>'
+	#列出來源頁面	
 	#print "<br>"
 	#request(method, url, body, headers)
 	#print (host,sub,params,headers)	
@@ -39,9 +37,10 @@ def http_post(data):
 	http_data = http_connect.getresponse()
 	# Read page source html
 	data = http_data.read()
-	#print data
-	#return data
 	http_connect.close()
+	#print data	
+	return data
+	
 	
 # sub = '/goform/LoginForm'
 login_url = '/goform/LoginForm'
@@ -61,7 +60,9 @@ data = '123'
 sub = login_url
 params = login_pass
 login_page = http_post(data)
-time.sleep(1)
+print 'login now...'
+time.sleep(2)
+print login_page
 
 #telnet_on
 # sub = telnet_url
@@ -85,9 +86,46 @@ print soup_out
 # checked = re.compile(u'checked')
 # checked = 'checked'
 #無法檢查checkbox！！！！！！
-for tag in soup_out.find_all(True):
-	print (tag._class)
-	# if tag.name == "checked":
-		# print "telnet enabledOOOOOOOOOOOOOO"
-	# else:
-		# print "telnet disabledXXXXXXXXXXXX"
+# ref https://www.tutorialspoint.com/python/string_find.htm
+# Return -1 on failure
+tag_check = soup_out.find('checked')
+if tag_check > 0:
+	print tag_check
+	print "Current telnet ON"
+	params = telnet_off
+else:
+	print tag_check
+	print "Current telnet OFF"
+	params = telnet_on
+
+	
+# ON變OFF OFF變ON
+print 'Change telnet now...'
+time.sleep(2)
+sub = telnet_url
+telnet_page = http_post(data)
+
+
+# double check telnet status
+print 'Confirm setting of telnet...'
+time.sleep(2)
+sub = telnet_url
+telnet_page = http_get(data)
+SRC_soup = BeautifulSoup(telnet_page, "html.parser")
+soup_out = SRC_soup.find(id='telnet_service')
+print soup_out
+tag_check_confirm = soup_out.find('checked')
+if tag_check == tag_check_confirm:
+	counter = counter + 1
+	print "Set confirmed : "+counter+" times."
+else:
+	# goback and set again.
+	print "Fail! set again."
+	
+
+
+#save and restart
+sub = save_restart_url
+params = save_restart
+save_restart_page = http_post(data)
+time.sleep(30)
