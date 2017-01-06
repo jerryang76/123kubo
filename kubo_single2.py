@@ -76,6 +76,7 @@ for src in soup_out:
 		DST_xfp_check = DST_soup.find(text=xfplay)
 		if DST_xfp_check is None:
 			print "<b>No xfplay</b>"
+			DST_link = "<b>No xfplay</b>"
 			continue #回到for
 		
 		
