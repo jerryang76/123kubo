@@ -1,8 +1,8 @@
 # coding=utf-8
 from bs4 import BeautifulSoup
 #from HTMLParser import HTMLParser
-import httplib, sys, re
-#åŠ å…¥base page
+import httplib, sys, re, os
+#¥[¤Jbase page
 #base_href = 'http://www.123kubo.com'
 print '<base href="http://www.123kubo.com/" target="_blank">'
 
@@ -10,28 +10,29 @@ def help():
 	print 'kubo_single <URL>'
 	print 'example:'
 	print 'kubo_single http://www.123kubo.com/vod-search-id-1-cid--area-%E6%AD%90%E7%BE%8E-tag--year-2015-wd--actor--order-vod_hits_month%20desc.html'
+	os.system("pause")
 	sys.exit()
 
-#é€£ç·šå‰æº–å‚™
+#³s½u«e·Ç³Æ
 host = 'www.123kubo.com'
-#æ’é™¤ç¶²ç«™é˜»æ“‹
+#±Æ°£ºô¯¸ªı¾×
 user_agent = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36'
 headers = { 'User-Agent' : user_agent}
-#é€£ç·šæ§åˆ¶èˆ‡URL
+#³s½u±±¨î»PURL
 http_connect = httplib.HTTPConnection(host, 80, timeout=10)
 
-#URL = raw_input("è«‹è¼¸å…¥123kubo.comç¶²å€:")
+#URL = raw_input("½Ğ¿é¤J123kubo.comºô§}:")
 if len(sys.argv) < 2:
 	help()
 sub = sys.argv[1]
 
 def http_get(data):
-	#åˆ—å‡ºä¾†æºé é¢
+	#¦C¥X¨Ó·½­¶­±
 	#print '<a href="'+sub+'" target="_blank">'+host+sub+'</a>'
 	#print "<br>"
 	#print sub
 	http_connect.request('GET', sub, '', headers)	
-	#æº–å‚™æ”¶å–å…§å®¹
+	#·Ç³Æ¦¬¨ú¤º®e
 	http_data = http_connect.getresponse()
 	#Read page source html
 	data = http_data.read()
@@ -40,75 +41,78 @@ def http_get(data):
 
 
 #find links from src page
-#æœå°‹å­—ä¸²ç‚º:<p class="t"> 
+#·j´M¦r¦ê¬°:<p class="t"> 
 data = '123'
 SRC_page = http_get(data)
 #print "here:"+str(http_soup_out)
 #print SRC_page
-#æº–å‚™è®“soupä»‹å…¥è™•ç†
+#·Ç³ÆÅısoup¤¶¤J³B²z
 SRC_soup = BeautifulSoup(SRC_page, "html.parser")
-#æ‰¾å°‹è©²é æ‰€æœ‰å½±ç‰‡å­é 
+#§ä´M¸Ó­¶©Ò¦³¼v¤ù¤l­¶
 #print SRC_soup.find_all('p', class_='t')
 soup_out = SRC_soup.find_all('p', class_='t')
-#æœå°‹å­—ä¸²æ™‚å¿…é ˆè¦è½‰ç¢¼æˆUTF-8
+#·j´M¦r¦ê®É¥²¶·­nÂà½X¦¨UTF-8
 xfplay = re.compile(u'xfplay')
 #xfplay = 'xfplay'
-#è™•ç†å­é ä¸­çš„é€£çµ
+#³B²z¤l­¶¤¤ªº³sµ²
 for src in soup_out:
-	#æ‰¾ä¸»é ä¸­æ‰€æœ‰é€£çµ
+	#§ä¥D­¶¤¤©Ò¦³³sµ²
 	src_links = src.findAll('a')
-	#æ‰¾æ‰€æœ‰éœ€è¦å–ä»£çš„ã€ç‹€æ…‹ã€‘
+	#§ä©Ò¦³»İ­n¨ú¥Nªº¡iª¬ºA¡j
 	p = src.find('a')
 	p1 = p.find_next('p')
 	p2 = p1.find_next('p')
 	p3 = p2.find_next('p')
 	p4 = p3.find_next('p')
-	#è©¢å•ä¸»é ä¸­é€£çµçš„å­é 
+	#¸ß°İ¥D­¶¤¤³sµ²ªº¤l­¶
 	for a in src_links:		
 		sub = a.get("href")
 		#print a.get("href")
 		#print sub
-		#http get å­é 
+		#http get ¤l­¶
 		DST_page = http_get(data)
 		#print DST_page
 		DST_soup = BeautifulSoup(DST_page, "html.parser")
-		#æœå°‹æ‰€æœ‰<div class="vmain"
+		#·j´M©Ò¦³<div class="vmain"
 		DST_vmain = DST_soup.find_all('div', class_='vmain')
-		#DST_vmainçµæœç‚ºutf-8ç·¨ç¢¼!!!ï¼Œéœ€è¦unicode
+		#DST_vmainµ²ªG¬°utf-8½s½X!!!¡A»İ­nunicode
 		#print DST_vmain
 		#print
 		
-		#æª¢æŸ¥å­é æ˜¯å¦æœ‰xfplay
+		#ÀË¬d¤l­¶¬O§_¦³xfplay
 		DST_xfp_check = DST_soup.find(text=xfplay)
 		if DST_xfp_check is None:
 			print "<b>No xfplay</b>"
-			DST_link = 'No xfplay'			
-			p4.replace_with(DST_link)
-			# p4.warp(DST_soup.new_tag("p"))
-			#å°±å·®åŠ å›<p>
-			
-			#continue #å›åˆ°for
+			DST_link = 'No xfplay'
+			addp = BeautifulSoup("<p></p>", "html.parser")
+			tag = addp.b
+			tag.append(DST_link)
+			print DST_link, addp
+			p4.replace_with(addp)
+			#´N®t¥[¦^<p>
+			#p4.Tag.insert(0,'p')
+			#continue #¦^¨ìfor
 		
 		
-		#è·³é€²foræœå°‹é€£çµä¹‹å‰ï¼Œå¿…é ˆå…ˆç¢ºèªvmainè£¡é¢æ˜¯å¦å«æœ‰xfplay
-		#åƒè€ƒæ¸¬è©¦é é¢:
+		#¸õ¶ifor·j´M³sµ²¤§«e¡A¥²¶·¥ı½T»{vmain¸Ì­±¬O§_§t¦³xfplay
+		#°Ñ¦Ò´ú¸Õ­¶­±:
 		#http://www.123kubo.com/vod-search-id-1-cid--area-%E6%AD%90%E7%BE%8E-tag--year-2016-wd--actor--order-vod_hits_month%20desc-p-3.html
-		#é™è‡¨/ç•°æ˜Ÿå…¥å¢ƒ(è£¡é¢æ²’æœ‰xfplayé€£çµ)
-		#é‚„æ²’åš!!!!!
-		#å¾ vmain ä¸­æ‰¾ xfplay
-		#å¾å«æœ‰xfplayçš„vmainä¸­ï¼Œæ‰¾<div class="vpl"
-		#å¾ vpl ä¸­æ‰¾
+		#­°Á{/²§¬P¤J¹Ò(¸Ì­±¨S¦³xfplay³sµ²)
+		#ÁÙ¨S°µ!!!!!
+		#±q vmain ¤¤§ä xfplay
+		#±q§t¦³xfplayªºvmain¤¤¡A§ä<div class="vpl"
+		#±q vpl ¤¤§ä
 		for sector in DST_vmain:	
 			#print sector
-			#åªèƒ½ç”¨Findï¼Œä¸ç„¶ç­”æ¡ˆæ˜¯arrayï¼Œç„¡æ³•check for none
+			#¥u¯à¥ÎFind¡A¤£µMµª®×¬Oarray¡AµLªkcheck for none
 			DST_check = sector.find(text=xfplay)
 			#print sector.find(text=xfplay)
 			if  DST_check is None:
 				# print "<b>No xfplay</b>"
-				continue #å›åˆ°for
+				continue #¦^¨ìfor
 			else:			
-				#å¦‚æœ‰xfplayï¼Œå‰‡vplè£¡ç¬¬1å€‹é€£çµå°±æ˜¯æ­£ç¢ºlink
-				#sectoræ˜¯unicode
+				#¦p¦³xfplay¡A«hvpl¸Ì²Ä1­Ó³sµ²´N¬O¥¿½Tlink
+				#sector¬Ounicode
 				# print sector
 				# print
 				# print
@@ -116,7 +120,7 @@ for src in soup_out:
 				# print DST_vpl
 				#print DST_vpl.find_all('a')
 				DST_link = DST_vpl.find_next('a')
-				#æœ€å¾Œçµæœ!!!
+				#³Ì«áµ²ªG!!!
 				print DST_link
 				p4.replace_with(DST_link)
 print SRC_soup
