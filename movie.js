@@ -13,30 +13,48 @@ function httpGet(theUrl)
 {
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.open( "GET", theUrl, false ); // false for synchronous request
-    xmlHttp.setRequestHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36");
+    //xmlHttp.setRequestHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36");
     xmlHttp.send( null );
     return xmlHttp.responseText;
 }
+function myFunction(hrefs) {
+    var out = "";
+    var i;
+    for(i = 0; i < hrefs.length; i++) {
+        var each_subpage = httpGet(hrefs[i]);
+        //alert(each_subpage);
+        //return each_subpage;
+        // In class vmain find child <p> contains xfplay
+        // $("p:contains(is)")
+        $(document).ready(function() {
+            each_sublink = $('.vmain > p:contains("xfplay")');
+            // If not found, return "no xfplay", else find class vpl's 1st link
+        });
 
+    }
+}
 $(document).ready(function() {
-  var hrefs = new Array();
-  // 找到 t class
-  var elements = $('.t > a');
-  // 在t class 抽出每個連結，但應該是每個t class抽出屬性href連結，存入href array
-  elements.each(function() {
-    hrefs.push($(this).attr('href'))
-  });
-  // 來個第一頁
-  var subpage = httpGet(hrefs[0]);
-  alert(subpage);
-  
-  $('body').append('<input type="button" value="開所有子頁" id="CP">')
-  $("#CP").css("position", "fixed").css("top", 0).css("left", 0);
-  $('#CP').click(function(){
-    $.each(hrefs, function(index, value) {
-      setTimeout(function(){
-       window.open(value, '_blank');
-      },1000);
+    var hrefs = new Array(0);
+    // 找到 t class
+    // Class Selector
+    // $('.classid')
+    var elements = $('.t > a');
+    // 在t class 抽出每個連結，但應該是每個t class抽出屬性href連結，存入href array
+    elements.each(function() {
+        hrefs.push($(this).attr('href'));
     });
-  });
+
+    // http get所有子頁
+    // var subpages = new Array(0);
+    //subpages.append = myFunction(hrefs);
+
+    $('body').append('<input type="button" value="開所有子頁" id="CP">');
+    $("#CP").css("position", "fixed").css("top", 0).css("left", 0);
+    $('#CP').click(function(){
+        $.each(hrefs, function(index, value) {
+            setTimeout(function(){
+                window.open(value, '_blank');
+            },1000);
+        });
+    });
 });
