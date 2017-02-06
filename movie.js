@@ -24,11 +24,14 @@ function myFunction(hrefs) {
         var each_subpage = httpGet(hrefs[i]);
         //alert(each_subpage);
         //return each_subpage;
-        // In class vmain find child <p> contains xfplay
-        // $("p:contains(is)")
-        $(document).ready(function() {
-            each_sublink = $('.vmain > p:contains("xfplay")');
+        // In .vmain class find child <p> contains xfplay
+        // In this .vmain class get decendent .vpl class's direct decendent <a> with attribute of "href" value
+        // $("p:contains("xfplay")")
+        // $('html:contains("xfplay")')
+        $(function() {
+            each_sublink = $('.vmain > html:contains("xfplay") .vpl > a.attr("href")');
             // If not found, return "no xfplay", else find class vpl's 1st link
+            alert(each_sublink);
         });
 
     }
