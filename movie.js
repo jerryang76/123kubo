@@ -22,6 +22,7 @@ function myFunction(hrefs) {
     var i;
     for(i = 0; i < hrefs.length; i++) {
         var each_subpage = httpGet(hrefs[i]);
+        //console.log(each_subpage);
         //alert(each_subpage);
         //return each_subpage;
         // In .vmain class find child <p> contains xfplay
@@ -29,7 +30,8 @@ function myFunction(hrefs) {
         // $("p:contains("xfplay")")
         // $('html:contains("xfplay")')
         $(function() {
-            each_sublink = $('.vmain > html:contains("xfplay") .vpl > a.attr("href")');
+            //each_sublink = $('.vmain > html:contains("xfplay") .vpl > a.attr("href")');
+            each_sublink = $( "div.vpl > ul > li > a", each_subpage ).first().text();
             // If not found, return "no xfplay", else find class vpl's 1st link
             alert(each_sublink);
         });
@@ -48,8 +50,12 @@ $(document).ready(function() {
     });
 
     // http get所有子頁
-    // var subpages = new Array(0);
-    //subpages.append = myFunction(hrefs);
+    var subpages = new Array(0);
+    subpages.append = myFunction(hrefs);
+    // 用jquery拿子頁
+    //$.get(hrefs[1], function(data, status){
+    //    alert("Data: " + data + "\nStatus: " + status);
+    //});
 
     $('body').append('<input type="button" value="開所有子頁" id="CP">');
     $("#CP").css("position", "fixed").css("top", 0).css("left", 0);
