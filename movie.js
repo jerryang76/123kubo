@@ -56,7 +56,9 @@ $(document).ready(function() {
     //$.get(hrefs[1], function(data, status){
     //    alert("Data: " + data + "\nStatus: " + status);
     //});
-
+    // 回填母頁
+    var test = $('div.listlf > ul > li > p').first().next().next().next().next().text();
+    alert(test);
     $('body').append('<input type="button" value="開所有子頁" id="CP">');
     $("#CP").css("position", "fixed").css("top", 0).css("left", 0);
     $('#CP').click(function(){
